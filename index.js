@@ -13,9 +13,13 @@ io.on('connection', (socket) => {
         addNewUserIfNotExists(userId, socket);
     });
 
-    console.log('onLineUsers: ', onLineUsers);
+    // disconnect event
+    socket.on('disconnect', () => {
+        onLineUsers = onLineUsers.filter(user => user.socketId !== socket.id);
+        io.emit('getOnLineUsers', onLineUsers);
+    });
 
-    io.emit('getOnLineUsers', onLineUsers);
+
 });
 
 
@@ -32,4 +36,15 @@ function addNewUserIfNotExists(userId, socket) {
             socketId: socket.id
         });
     }
+
+    console.log('onLineUsers: ', onLineUsers);
+
+    io.emit('getOnLineUsers', onLineUsers);
+}
+
+function disconnectUser(userId) { 
+    onLineUsers = onLineUsers.filter(user => user.userId !== userId); 
+
+    io.emit('getOnLineUsers', onLineUsers);
+
 }
