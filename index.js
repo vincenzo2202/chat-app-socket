@@ -15,8 +15,7 @@ io.on('connection', (socket) => {
 
     // disconnect event
     socket.on('disconnect', () => {
-        onLineUsers = onLineUsers.filter(user => user.socketId !== socket.id);
-        io.emit('getOnLineUsers', onLineUsers);
+        handleUserDisconnect(socket);
     });
 
 
@@ -27,6 +26,7 @@ io.listen(3000, () => {
     console.log('server running at http://localhost:3000');
 
 });
+// fix disconnecting user from the server 
 
 function addNewUserIfNotExists(userId, socket) {
     const isUserOnline = onLineUsers.some(user => user.userId === userId);
@@ -42,9 +42,8 @@ function addNewUserIfNotExists(userId, socket) {
     io.emit('getOnLineUsers', onLineUsers);
 }
 
-function disconnectUser(userId) { 
-    onLineUsers = onLineUsers.filter(user => user.userId !== userId); 
-
+function handleUserDisconnect(socket) { 
+    onLineUsers = onLineUsers.filter(user => user.socketId !== socket.id); 
+    
     io.emit('getOnLineUsers', onLineUsers);
-
 }
