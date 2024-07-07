@@ -13,6 +13,16 @@ io.on('connection', (socket) => {
         addNewUserIfNotExists(userId, socket);
     });
 
+    // add new Message
+    socket.on('sendMessage', (message) => {
+        const user = onLineUsers.find(user => user.userId === message.recipientId);
+
+        if (user) {
+            io.to(user.socketId).emit('getMessage', message);
+        }
+    });
+    
+
     // disconnect event
     socket.on('disconnect', () => {
         handleUserDisconnect(socket);
